@@ -1,0 +1,74 @@
+---
+title: "R Markdown Template"
+author: "Caitrin Murphy"
+date: "2024-12-05"
+output: pdf_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# RMarkdown Reproducibility Example
+
+This is a template RMarkdown document which follows minimal reproducibility best practices.
+
+## Dependencies
+
+Describe any dependencies needed to execute your code. 
+
+### Data
+The data set "data.txt" is read in from the provided text file.
+
+### System
+
+Make sure to list all system dependencies needed to execute your code. For example, if you use R's built-in pipe operator `|>`, then your code depends on R version at least 4.1. If you use R's stan package, then you need V8 as a system dependency.
+
+At the very least, you should provide a list of dependencies such as:
+```yaml
+dependencies:
+  - R>=4.1  # https://www.r-project.org/
+```
+
+ADD: latex2exp, saveRDS()
+### R Packages and Folders
+
+R packages dependencies can be managed and installed directly in your code. For this, I recommend using the **pacman** package:
+
+```{r packages, include=FALSE}
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(tidyverse, brms, latex2exp)
+
+dir.create("output", showWarnings = FALSE)
+```
+
+
+## Code and Analyses
+
+In this section, you should place all of your code and analyses.
+
+### Managing Figures
+
+If you generate figures for an external document, then make sure to both display the figures and save them automatically to a subfolder. Note that the subfolder may not exist on the computer of the person running your code. As such, you should create if if it does not already exist:
+
+```{r figure}
+fig <- ggplot(pressure) +
+  geom_point(aes(x=temperature, y=pressure))
+
+dir.create("output", showWarnings=FALSE)
+ggsave("output/pressure_plot.pdf", fig) 
+
+show(fig)
+```
+
+## System Information
+
+In this section, provide information about the system that was used to execute the RMarkdown document. This information can be generated automatically as follows:
+
+```{r}
+sessionInfo()
+```
+

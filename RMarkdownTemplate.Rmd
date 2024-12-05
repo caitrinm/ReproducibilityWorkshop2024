@@ -12,6 +12,14 @@ This R Markdown template outlines some reproducibility suggestions for GWD thesi
 
 Describe all internal (e.g., R version) and external (e.g., data) dependencies needed to render the document. 
 
+\textbf{R version 4.4.1 (2024-06-14)}
+
+
+```{r version, include=FALSE}
+# Check the version
+R.Version()$version.string
+```
+
 ### Data and Folders
 
 Example: The data are stored in the "data.txt" file in the "data" folder.
@@ -24,20 +32,6 @@ dir.create("output", showWarnings = FALSE)
 ```
 
 Any files in the "output" folder that are read in using `readRDS()` should be mentioned here.
-
-### System
-
-List any system dependencies needed to execute your code. 
-
-```yaml
-dependencies:
-  - R>=4.1  # https://www.r-project.org/
-```
-
-```{r version, include=FALSE}
-# Check the version
-R.Version()$version.string
-```
 
 ### R Packages
 

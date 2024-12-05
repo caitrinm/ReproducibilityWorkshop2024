@@ -16,7 +16,7 @@ Describe all internal (e.g., R version) and external (e.g., data) dependencies n
 
 Example: The data are stored in the "data.txt" file in the "data" folder.
 
-```{r folders, include=FALSE}
+```{r folders}
 # Folders
 dir.create("data", showWarnings = FALSE)
 dir.create("figures", showWarnings = FALSE)
@@ -39,7 +39,6 @@ dependencies:
 R.Version()$version.string
 ```
 
-
 ### R Packages
 
 Install and load packages simultaneously with the **pacman** package.
@@ -50,7 +49,7 @@ if (!require(pacman)) install.packages("pacman")
 pacman::p_load(tidyverse, brms, latex2exp)
 
 # If you get the error "! LaTeX Error: File `framed.sty' not found." when rendering,
-# uncomment and run the following 2 lines.
+# un-comment and run the following 2 lines.
 #install.packages(c('tinytex', 'rmarkdown'))
 #tinytex::install_tinytex()
 ```
@@ -73,11 +72,11 @@ fit1 <- brm(count ~ zAge + zBase * Trt + (1 | patient),
 saveRDS(fit1, "output/fit1.RDS")
 ```
 
-```{r brmsread, eval = TRUE, echo=TRUE}
+```{r brmsread, eval=TRUE, echo=TRUE}
 # Extract model output without rerunning each time
 
 fit1 <- readRDS("output/fit1.RDS")
-post_sum <- posterior_summary(fit1)
+post.sum <- brms::posterior_summary(fit1)
 ```
 
 ### Figures
@@ -89,10 +88,11 @@ The **latex2exp** package is useful for axis labels, legends, etc. because it pa
 ```{r figure, fig.width=6, fig.height=4, echo=FALSE}
 post.samples <- as_draws_matrix(fit1)
 
+# Traceplot for the intercept
 figure1 <- ggplot(post.samples) + 
   geom_line(aes(x = c(1:nrow(post.samples)), y = Intercept)) +
   labs(x = "Iteration", y = "Posterior Draw", 
-       title = latex2exp::TeX(r"( Traceplot for the intercept ($\beta_0$) )")) + 
+       title = latex2exp::TeX(r"( Traceplot for the Intercept ($\beta_0$) )")) + 
   theme_bw()
 
 # Save the figure as a pdf, png, jpg, etc.

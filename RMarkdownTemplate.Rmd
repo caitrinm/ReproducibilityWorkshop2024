@@ -6,7 +6,7 @@ output:
   pdf_document: default
 ---
 
-This R Markdown template outlines minimal reproducibility suggestions for GWD thesis writers.
+This R Markdown template outlines some reproducibility suggestions for GWD thesis writers.
 
 # Dependencies
 

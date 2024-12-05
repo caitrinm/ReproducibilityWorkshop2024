@@ -1,74 +1,106 @@
 ---
 title: "R Markdown Template"
-author: "Caitrin Murphy"
+author: "Your Name"
 date: "2024-12-05"
-output: pdf_document
+output:
+  pdf_document: default
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
+This is an R Markdown template that outlines minimal reproducibility suggestions for the GWD thesis writers.
 
-# RMarkdown Reproducibility Example
-
-This is a template RMarkdown document which follows minimal reproducibility best practices.
-
-## Dependencies
+# Dependencies
 
 Describe any dependencies needed to execute your code. 
 
-### Data
-The data set "data.txt" is read in from the provided text file.
+### Data and Folders
+
+Example: The data is stored in the "data.txt" file in the "data" folder.
+
+```{r folders, include=FALSE}
+# Folders
+dir.create("data", showWarnings = FALSE)
+dir.create("figures", showWarnings = FALSE)
+dir.create("output", showWarnings = FALSE)
+```
+
+Any files in the "output" folder that are read in using readRDS() should be mentioned here.
 
 ### System
 
-Make sure to list all system dependencies needed to execute your code. For example, if you use R's built-in pipe operator `|>`, then your code depends on R version at least 4.1. If you use R's stan package, then you need V8 as a system dependency.
+List any system dependencies needed to execute your code. 
 
-At the very least, you should provide a list of dependencies such as:
 ```yaml
 dependencies:
   - R>=4.1  # https://www.r-project.org/
 ```
 
-ADD: latex2exp, saveRDS()
-### R Packages and Folders
+```{r version, include=FALSE}
+# Check the version
+R.Version()$version.string
+```
 
-R packages dependencies can be managed and installed directly in your code. For this, I recommend using the **pacman** package:
 
-```{r packages, include=FALSE}
+### R Packages
+
+Install and load packages simultaneously with the **pacman** package.
+
+```{r packages, echo=TRUE}
+# Packages
 if (!require(pacman)) install.packages("pacman")
 pacman::p_load(tidyverse, brms, latex2exp)
 
-dir.create("output", showWarnings = FALSE)
+# If you get the error "! LaTeX Error: File `framed.sty' not found." when rendering,
+# uncomment and run the following 2 lines.
+#install.packages(c('tinytex', 'rmarkdown'))
+#tinytex::install_tinytex()
+```
+
+# Code
+
+The code to produce all tables, figures, etc. in your thesis goes here.
+
+### Modeling
+
+If you run computationally intensive procedures (e.g., Bayesian hierarchical models, spatial data, etc.), you can use saveRDS() and readRDS() to save and read back in output.
+
+```{r brmssave, eval=FALSE}
+# Example adapted from http://paulbuerkner.com/brms/
+
+fit1 <- brm(count ~ zAge + zBase * Trt + (1 | patient),
+            data = epilepsy, family = poisson(), chains = 2, 
+            iter = 550, cores = 2, warmup = 50)
+
+saveRDS(fit1, "output/fit1.RDS")
+```
+
+```{r brmsread, eval = TRUE, echo=TRUE}
+# Extract model output without rerunning each time
+
+fit1 <- readRDS("output/fit1.RDS")
+post_sum <- posterior_summary(fit1)
+```
+
+### Figures
+
+Display your figures in the generated pdf and save them in the "figures" folder for use in your thesis. The **latex2exp** package is useful for figure labels because it allows you type in the LaTex syntax.
+
+```{r figure, fig.width=6, fig.height=4, echo=FALSE}
+post.samples <- as_draws_matrix(fit1)
+figure1 <- ggplot(post.samples) + 
+  geom_line(aes(x = c(1:nrow(post.samples)), y = Intercept)) +
+  labs(x = "Iteration", y = "Posterior Draw", 
+       title = latex2exp::TeX(r"( Traceplot for the intercept ($\beta_0$) )")) + 
+  theme_bw()
+
+# Save the figure as a pdf, png, jpg, etc.
+ggsave("figures/traceplot.pdf", figure1, width = 8, height = 6) 
+
+# Display the graphic when rendering
+show(figure1)
 ```
 
 
-## Code and Analyses
 
-In this section, you should place all of your code and analyses.
 
-### Managing Figures
 
-If you generate figures for an external document, then make sure to both display the figures and save them automatically to a subfolder. Note that the subfolder may not exist on the computer of the person running your code. As such, you should create if if it does not already exist:
-
-```{r figure}
-fig <- ggplot(pressure) +
-  geom_point(aes(x=temperature, y=pressure))
-
-dir.create("output", showWarnings=FALSE)
-ggsave("output/pressure_plot.pdf", fig) 
-
-show(fig)
-```
-
-## System Information
-
-In this section, provide information about the system that was used to execute the RMarkdown document. This information can be generated automatically as follows:
-
-```{r}
-sessionInfo()
-```
 

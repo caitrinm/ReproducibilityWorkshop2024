@@ -6,15 +6,15 @@ output:
   pdf_document: default
 ---
 
-This is an R Markdown template that outlines minimal reproducibility suggestions for the GWD thesis writers.
+This R Markdown template outlines minimal reproducibility suggestions for GWD thesis writers.
 
 # Dependencies
 
-Describe any dependencies needed to execute your code. 
+Describe all internal (e.g., R version) and external (e.g., data) dependencies needed to render the document. 
 
 ### Data and Folders
 
-Example: The data is stored in the "data.txt" file in the "data" folder.
+Example: The data are stored in the "data.txt" file in the "data" folder.
 
 ```{r folders, include=FALSE}
 # Folders
@@ -23,7 +23,7 @@ dir.create("figures", showWarnings = FALSE)
 dir.create("output", showWarnings = FALSE)
 ```
 
-Any files in the "output" folder that are read in using readRDS() should be mentioned here.
+Any files in the "output" folder that are read in using `readRDS()` should be mentioned here.
 
 ### System
 
@@ -61,7 +61,7 @@ The code to produce all tables, figures, etc. in your thesis goes here.
 
 ### Modeling
 
-If you run computationally intensive procedures (e.g., Bayesian hierarchical models, spatial data, etc.), you can use saveRDS() and readRDS() to save and read back in output.
+If you run computationally intensive procedures (e.g., Bayesian hierarchical models, spatial data, etc.), you can use `saveRDS()` and `readRDS()` to run and save the output once, then read back in saved output later.
 
 ```{r brmssave, eval=FALSE}
 # Example adapted from http://paulbuerkner.com/brms/
@@ -82,10 +82,13 @@ post_sum <- posterior_summary(fit1)
 
 ### Figures
 
-Display your figures in the generated pdf and save them in the "figures" folder for use in your thesis. The **latex2exp** package is useful for figure labels because it allows you type in the LaTex syntax.
+Display your figures in the rendered R Markdown pdf and save them in the "figures" folder for use in your thesis. 
+
+The **latex2exp** package is useful for axis labels, legends, etc. because it parses LaTex strings.
 
 ```{r figure, fig.width=6, fig.height=4, echo=FALSE}
 post.samples <- as_draws_matrix(fit1)
+
 figure1 <- ggplot(post.samples) + 
   geom_line(aes(x = c(1:nrow(post.samples)), y = Intercept)) +
   labs(x = "Iteration", y = "Posterior Draw", 
